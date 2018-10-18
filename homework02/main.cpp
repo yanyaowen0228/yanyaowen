@@ -43,13 +43,13 @@ enum SortKind{
 
 
 typedef struct{
-    QStringList stud_data;                                                                 // 请补全结构定义
+     QList<QString> stud_data;                                                         // 请补全结构定义
 } studData;
 
 QDebug operator<< (QDebug d, const studData &data) {
     int i;
     for(i=0;i<data.stud_data.size();i++)
-    d<<data.stud_data.at(i);                                                               // 请补全运算符重载函数，使其可以直接输出studData结构
+    d<<data.stud_data.at(i);                                                           // 请补全运算符重载函数，使其可以直接输出studData结构
     qDebug("\n");
     return d;
 }
@@ -68,7 +68,7 @@ bool myCmp::operator()(const studData &d1, const studData &d2)
     quint32 sortedColumn = 0x00000001<<currentColumn;
     switch (sortedColumn) {
     case SK::col01:
-    result=(d1.stud_data.at(currentColumn)>d2.stud_data.at(currentColumn));
+    default:result=(d1.stud_data.at(currentColumn+1)>d2.stud_data.at(currentColumn+1));
     break;
     }
     return result;
@@ -107,8 +107,14 @@ void ScoreSorter::readFile()
     {
     QString string(file.readLine());
     list.stud_data=string.split(" ",QString::SkipEmptyParts);
-    if((list.stud_data).last() == "\n") list.stud_data.removeLast();
-    if(list.stud_data.size()==0) continue;
+    if((list.stud_data).last() == "\n")
+        {
+    list.stud_data.removeLast();
+    }
+    if(list.stud_data.size()==0)
+        {
+    continue;
+    }
     data.append(list);
     }
     file.close();
@@ -116,17 +122,16 @@ void ScoreSorter::readFile()
 
 void ScoreSorter::doSort()
 {
-    int K=4;
-    myCmp temp(K-2);
-    std::sort(data.begin(),data.end(),temp);
-    qDebug()<<"排序后输出，当前排序第 "<<K<<" 列："<<"\n";
-    Title.removeLast();
-    qDebug()<< Title;
-    for(int i=0;i<data.size();i++)
-    {
-      qDebug()<<data.at(i);
-    }
- }
+        int K=3, j=0;
+        myCmp sorting(K-1);
+        std::sort(data.begin(),data.end(),sorting);
+        qDebug()<<"排序后输出，当前排序第 "<<K+1<<" 列："<<"\n";
+        Title.removeLast();
+        qDebug()<< Title;
+        for(j=0;j<data.size();j++)
+        qDebug()<<data.at(j);
+        qDebug()<<"------------------------------------------------\n";
+}
 
 
 
