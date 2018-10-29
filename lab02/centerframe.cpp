@@ -23,7 +23,6 @@
      return drawWidget;
  }
 
-
  void CenterFrame::createUserCommandArea()
  {
 
