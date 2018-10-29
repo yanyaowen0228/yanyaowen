@@ -2,6 +2,7 @@
  #include <QMouseEvent>
  #include <QPen>
  #include <QMessageBox>
+ #include <QFileDialog>
 
 
  DrawWidget::DrawWidget(QWidget *parent) : QWidget(parent)
@@ -192,6 +193,21 @@
      return rect;
  }
 
+ void DrawWidget::drawpho()
+ {
+     QImage graph;
+     QString open;
+     open=QFileDialog::getOpenFileName(this,tr("选择图像"),"",tr("Images (*.png *.bmp *.jpg)"));
+     graph.load(open);
+     QPixmap *newPix = new QPixmap(size());
+     *newPix=QPixmap(*this->pix);
+     *pix = QPixmap::fromImage(graph.scaledToWidth(pix->size().width()*0.5, Qt::FastTransformation));
+     QPainter g(newPix);
+     g.drawPixmap (QPoint((width()-pix->width())/2,(height()-pix->width())/2), *pix);
+     delete pix;
+     pix = newPix;
+     update();
+ }
 
 
  void DrawWidget::drawShape(const QPointF ptStart,const QPointF ptEnd,const ST::ShapeType drawType)
@@ -268,3 +284,4 @@
 
      painter.end ();
  }
+

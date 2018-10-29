@@ -135,6 +135,20 @@
      connect(btnDiamond,&QPushButton::clicked,
              this,&CenterFrame::on_btnDiamondClicked);
 
+     //绘图按钮
+     btnPhoto = new QPushButton(group);
+     btnPhoto ->setToolTip("选择图片");
+     btnPhoto ->setCheckable(true);
+     btnPhoto ->setIconSize(p.size());
+
+     p.fill(BACKGROUND_COLOR);
+     QImage graph(":/icon-xxdpi/user");
+     QRect graphy(0,0,p.size().width(),p.size().height());
+     QRect gra =graph.rect();
+
+     painter.drawImage(graphy,graph,gra);
+     btnPhoto->setIcon (QIcon(p));
+     connect(btnPhoto,&QPushButton::clicked,this, &CenterFrame::on_btnPhotoClicked);
 
 
      // 选项Group布局
@@ -145,6 +159,7 @@
      gridLayout->addWidget(btnLine,1,1);
      gridLayout->addWidget(btnText,2,0);
      gridLayout->addWidget(btnDiamond,2,1);
+     gridLayout->addWidget(btnPhoto,3,0);
      gridLayout->setMargin(3);
      gridLayout->setSpacing(3);
      group->setLayout(gridLayout);
@@ -334,6 +349,21 @@
       else{
           drawWidget->setShapeType(ST::None);
       }
+  }
+ void CenterFrame::on_btnPhotoClicked()
+  {
+      if(btnPhoto->isChecked())
+      {
+          drawWidget->setShapeType(ST::Photo);
+          drawWidget->drawpho();
+          updateButtonStatus();
+      }
+      else
+      {
+
+          drawWidget->setShapeType(ST::None);
+      }
+
   }
 
 

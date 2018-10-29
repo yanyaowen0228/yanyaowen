@@ -43,6 +43,7 @@
       void on_btnTextClicked();
       void on_edtTextEdited(const QString &text);
       void on_btnDiamondClicked();
+      void on_btnPhotoClicked();
 
 
   private:
@@ -56,6 +57,7 @@
       QPushButton* btnTriangle;
       QPushButton* btnText;
       QPushButton* btnDiamond;
+      QPushButton* btnPhoto;
       QLineEdit* edtText;
 
 
