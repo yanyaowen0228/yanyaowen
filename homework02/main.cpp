@@ -134,7 +134,6 @@ void ScoreSorter::doSort()
 }
 
 
-
 //void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 //{
     // 自定义qDebug
