@@ -194,20 +194,20 @@
  }
 
  void DrawWidget::drawpho()
- {
-     QImage graph;
-     QString open;
-     open=QFileDialog::getOpenFileName(this,tr("选择图像"),"",tr("Images (*.png *.bmp *.jpg)"));
-     graph.load(open);
-     QPixmap *newPix = new QPixmap(size());
-     *newPix=QPixmap(*this->pix);
-     *pix = QPixmap::fromImage(graph.scaledToWidth(pix->size().width()*0.5, Qt::FastTransformation));
-     QPainter g(newPix);
-     g.drawPixmap (QPoint((width()-pix->width())/2,(height()-pix->width())/2), *pix);
-     delete pix;
-     pix = newPix;
-     update();
- }
+  {
+      QImage graph;
+      QString open;
+      open=QFileDialog::getOpenFileName(this,tr("选择图像"),"",tr("Images (*.png *.bmp *.jpg)"));
+      graph.load(open);
+      QPixmap *newPix = new QPixmap(size());
+      *newPix=QPixmap(*this->pix);
+      *pix = QPixmap::fromImage(graph.scaledToWidth(pix->size().width()*0.5, Qt::FastTransformation));
+      QPainter g(newPix);
+      g.drawPixmap (QPoint((width()-pix->width())/2,(height()-pix->width())/2), *pix);
+      delete pix;
+      pix = newPix;
+      update();
+  }
 
 
  void DrawWidget::drawShape(const QPointF ptStart,const QPointF ptEnd,const ST::ShapeType drawType)
@@ -267,10 +267,10 @@
      }
          break;
      case ST::Diamond:{
-         QPoint point1((ptStart.x()+ptEnd.x())/2,ptStart.y());
-         QPoint point2(ptStart.x(),(ptStart.y()+ptEnd.y())/2);
-         QPoint point3(ptEnd.x(),(ptStart.y()+ptEnd.y())/2);
-         QPoint point4((ptStart.x()+ptEnd.x())/2,ptEnd.y());
+         QPoint point1((ptStart.x()+ptEnd.x())/2,ptStart.y());   //zhongjianshangmian
+         QPoint point2(ptStart.x(),(ptStart.y()+ptEnd.y())/2);   //zuobian
+         QPoint point3(ptEnd.x(),(ptStart.y()+ptEnd.y())/2);     //youbian
+         QPoint point4((ptStart.x()+ptEnd.x())/2,ptEnd.y());     //zhongjianxianmian
 
          QVector<QPointF> points;
          points<<point1<<point2<<point4<<point3;

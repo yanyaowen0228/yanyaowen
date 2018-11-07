@@ -115,23 +115,23 @@
              this,&CenterFrame::on_btnTextClicked);
 
      //菱形按钮
-     btnDiamond = new QPushButton(group);
-     btnDiamond->setToolTip("绘制菱形");
-     btnDiamond->setCheckable(true);
-     btnDiamond->setIconSize(p.size());
+     btnDiamond = new QPushButton(group);                  //父对象为QGroupBox组框
+     btnDiamond->setToolTip("绘制菱形");                    //设置工具提示
+     btnDiamond->setCheckable(true);                       //使能可选中功能
+     btnDiamond->setIconSize(p.size());                    //设置按钮图标的大小
 
      p.fill(BACKGROUND_COLOR);
     //菱形的四个顶点
-     QPointF apt1(3,p.size().height()/2);
-     QPointF apt2(p.size().width()/2,p.size().height()-3);
-     QPointF apt3(p.size().width()-3,p.size().height()/2);
-     QPointF apt4(p.size().width()/2,3);
+     QPointF apt1(3,p.size().height()/2);                  //zuobian
+     QPointF apt2(p.size().width()/2,p.size().height()-3); //zhongjianxiamian
+     QPointF apt3(p.size().width()-3,p.size().height()/2); //youbian
+     QPointF apt4(p.size().width()/2,3);                   //zhongjianshangmian
      QVector<QPointF> apts0;
      apts0<<apt1<<apt2<<apt2<<apt3<<apt3<<apt4<<apt4<<apt1;
 
      painter.drawLines(apts0);
-     btnDiamond->setIcon (QIcon(p));
-     connect(btnDiamond,&QPushButton::clicked,
+     btnDiamond->setIcon (QIcon(p));                       //设置按钮图标
+     connect(btnDiamond,&QPushButton::clicked,             //连接信号和槽，按钮被点击后执行相应函数
              this,&CenterFrame::on_btnDiamondClicked);
 
      //绘图按钮
@@ -141,7 +141,7 @@
      btnPhoto ->setIconSize(p.size());
 
      p.fill(BACKGROUND_COLOR);
-     QImage graph(":/icon-xxdpi/user");
+     QImage graph("D:/pic");
      QRect graphy(0,0,p.size().width(),p.size().height());
      QRect gra =graph.rect();
 
@@ -157,8 +157,8 @@
      gridLayout->addWidget(btnTriangle,1,0);
      gridLayout->addWidget(btnLine,1,1);
      gridLayout->addWidget(btnText,2,0);
-     gridLayout->addWidget(btnDiamond,2,1);
-     gridLayout->addWidget(btnPhoto,3,0);
+     gridLayout->addWidget(btnDiamond,2,1);         //第三行第二列
+     gridLayout->addWidget(btnPhoto,3,0);           //第四行的一列
      gridLayout->setMargin(3);
      gridLayout->setSpacing(3);
      group->setLayout(gridLayout);
