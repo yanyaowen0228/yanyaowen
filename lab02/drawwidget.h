@@ -18,6 +18,8 @@
      void setShapeType(ST::ShapeType type);
      ST::ShapeType shapeType();
      void setDrawnText(QString text);
+     bool pho=false;
+
 
 
  protected:
@@ -40,6 +42,7 @@
 
  private :
      QPixmap *pix;
+     QPixmap pir;//画板指针，画图片
      QPoint startpos;
      QPoint endpos;
      bool canDraw;
@@ -48,5 +51,6 @@
      QColor color;
      ST::ShapeType drawType;
      QString drawnText;
+     QString filename;
  };
  #endif // DRAWWIDGET_H

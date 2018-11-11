@@ -14,13 +14,13 @@
      pix = new QPixmap(size());      //此QPixmap对象用来准备随时接受绘制的内容
      pix->fill (BACKGROUND_COLOR);          //填充背景色为白色
      setMinimumSize (600, 400);      //设置绘制区窗体的最小尺寸
-
- }
+}
 
  DrawWidget::~DrawWidget()
  {
      // 注意：一定要删除pix指针
      delete pix;
+
  }
 
  void DrawWidget::setStyle (int s)
@@ -90,18 +90,25 @@
  {
      QPainter painter(this);
      painter.drawPixmap (QPoint(0, 0), *pix);
+
  }
 
 
  void DrawWidget::resizeEvent (QResizeEvent *event)
  {
-     if(height () > pix->height () || width() > pix->width ())
-     {
          QPixmap *newPix = new QPixmap(size());
          newPix->fill (BACKGROUND_COLOR);
          QPainter p(newPix);
+         if(!pho)
+         {
          p.drawPixmap (QPoint(0, 0), *pix);
-         delete pix;     //一定要删除原来的对象，否则会出现内存泄漏
+         delete pix;
+         pix = newPix;
+     }
+     else{
+         QPixmap pix2=pir.scaled(size(),Qt::KeepAspectRatio);
+         p.drawPixmap(QPoint((width()-pix2.width())/2,0),pix2);
+         delete pix;
          pix = newPix;
      }
      QWidget::resizeEvent(event);
@@ -113,6 +120,21 @@
      // 清除绘图内容，简单的用背景色填充整个画布即可
      pix->fill(BACKGROUND_COLOR);
      update ();
+ }
+ void DrawWidget::drawpho()
+ {
+     filename = QFileDialog::getOpenFileName(this,tr("选择图片文件"), "",tr("Images (*.png *.bmp *.jpg)"));
+     pix ->load(filename);
+     pir=*pix;
+     pho=true;
+     QPixmap *newPix = new QPixmap(size());
+     newPix->fill (BACKGROUND_COLOR);
+     QPainter p(newPix);
+     QPixmap pix2=pix->scaled(size(),Qt::KeepAspectRatio);
+     p.drawPixmap(QPoint((width()-pix2.width())/2,0),pix2);
+     delete pix;     //一定要删除原来的对象，否则会出现内存泄漏
+     pix = newPix;
+     update();
  }
 
  void DrawWidget::setShapeType(ST::ShapeType type)
@@ -193,21 +215,7 @@
      return rect;
  }
 
- void DrawWidget::drawpho()
-  {
-      QImage graph;
-      QString open;
-      open=QFileDialog::getOpenFileName(this,tr("选择图像"),"",tr("Images (*.png *.bmp *.jpg)"));
-      graph.load(open);
-      QPixmap *newPix = new QPixmap(size());
-      *newPix=QPixmap(*this->pix);
-      *pix = QPixmap::fromImage(graph.scaledToWidth(pix->size().width()*0.5, Qt::FastTransformation));
-      QPainter g(newPix);
-      g.drawPixmap (QPoint((width()-pix->width())/2,(height()-pix->width())/2), *pix);
-      delete pix;
-      pix = newPix;
-      update();
-  }
+
 
 
  void DrawWidget::drawShape(const QPointF ptStart,const QPointF ptEnd,const ST::ShapeType drawType)
