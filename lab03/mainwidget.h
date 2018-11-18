@@ -45,7 +45,7 @@ private slots:
     void on_btnLegendAlign_clicked();
     void on_cbLegendBold_clicked();
     void on_cbLegendItalic_clicked();
-    void on_dataError(QString error);
+    //void on_dataError(QString error);
 
     void on_radioTemp_clicked();
 

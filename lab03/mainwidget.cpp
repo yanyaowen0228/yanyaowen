@@ -26,9 +26,11 @@ mainWidget::mainWidget(QWidget *parent) :
     addLineSeries(ui->chartview->chart(),"",Qt::red);
 
     worker = new dataWorker(this);
+    //connect(worker,&dataWorker::dataParseFinished,this,&mainWidget::updateDataChart);
+    //connect(worker,&dataWorker::dataParseError,this,&mainWidget::on_dataError);
+    //connect(worker,&dataWorker::httpRequestError,this,&mainWidget::on_dataError);
     connect(worker,&dataWorker::dataParseFinished,this,&mainWidget::updateDataChart);
-    connect(worker,&dataWorker::dataParseError,this,&mainWidget::on_dataError);
-    connect(worker,&dataWorker::httpRequestError,this,&mainWidget::on_dataError);
+    worker->setQueryType(Temperature);
 
 }
 
@@ -140,9 +142,15 @@ void mainWidget::addLineSeries(QChart *chart, const QString &seriesName, const Q
             mAxisX->setRange(QDateTime::currentDateTime().addMonths(-1),QDateTime::currentDateTime());
 
             QValueAxis *mAxisY = new QValueAxis;
-            mAxisY->setRange(-5,40);
-            mAxisY->setLabelFormat("%g");
-            mAxisY->setTitleText("摄氏度(°C)");
+            if(worker->getQueryType()==Temperature)
+            {
+                mAxisY->setRange(-5,40);
+                mAxisY->setLabelFormat("%g");
+                mAxisY->setTitleText("摄氏度(°C)");
+            }else{
+                mAxisY->setRange(0,500);
+                mAxisY->setTitleText("空气质量指数");
+            }
 
             chart->setAxisX(mAxisX,series);
             chart->setAxisY(mAxisY,series);
@@ -249,19 +257,19 @@ void mainWidget::on_btnStart_clicked()
 
     // 选择城市
     if(ui->comboCity->currentText()=="南京")       {
-          worker->setQueryCity("beijing");
+          worker->setQueryCity("nanjing");
       }
       else if (ui->comboCity->currentText()=="北京") {
-          worker->setQueryCity("shenyang");
+          worker->setQueryCity("beijing");
       }
       else if (ui->comboCity->currentText()=="上海") {
           worker->setQueryCity("shanghai");
       }
       else if (ui->comboCity->currentText()=="杭州") {
-          worker->setQueryCity("xiamen");
+          worker->setQueryCity("hangzhou");
       }
       else if (ui->comboCity->currentText()=="哈尔滨") {
-          worker->setQueryCity("hainan");
+          worker->setQueryCity("haerbin");
       }
 
 
@@ -469,13 +477,13 @@ void mainWidget::on_cbLegendItalic_clicked()
  * @param error 具体的错误信息
  *
  */
-void mainWidget::on_dataError(QString error)
-{
-    qDebug()<<error;
+//void mainWidget::on_dataError(QString error)
+//{
+    //qDebug()<<error;
     // 使能两个按钮
-    ui->comboMonth->setEnabled(true);
-    ui->btnStart->setEnabled(true);
-}
+    //ui->comboMonth->setEnabled(true);
+    //ui->btnStart->setEnabled(true);
+//}
 
 void mainWidget::on_radioTemp_clicked()
 {

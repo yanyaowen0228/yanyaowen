@@ -54,6 +54,9 @@ private:
     QList<QDateTime> dataDate;              //!< 日期
     QList<qreal> dataHigh;                  //!< 最高温度
     QList<qreal> dataLow;                   //!< 最低温度
+    QList<qreal> dataList1;                 //!< 数据列表1
+    QList<qreal> dataList2;                 //!< 数据列表2
+
 
     const QString splitter;                 //!< 数据分隔符
     const QString dataPath;                 //!< 数据保存路径

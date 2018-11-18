@@ -47,6 +47,10 @@ QString dataWorker::getQueryTypeInString()
     }
 }
 
+/**
+ * @brief dataWorker::setQueryCity
+ * @param newCity
+ */
 void dataWorker::setQueryCity(QString newCity){
     city = newCity;
 }
@@ -89,7 +93,7 @@ QString dataWorker::requestDate()
 void dataWorker::doRequest()
 {
     // 导入数据，首先检查是否已经存在数据文件
-    QString fName = QString("%1/%2.txt").arg(dataPath,_requestDate);
+    QString fName = QString("%1/%2-%3-%4.txt").arg(dataPath,_requestDate,city,getQueryTypeInString());
 //    qDebug()<<fName;
     QStringList dataList;
     QFile f(fName);
@@ -115,7 +119,7 @@ void dataWorker::doRequest()
  * 该函数将请求年月插入模板中，获得实际数据页面的链接地址。
  */
 QString dataWorker::requestUrl()
-{    
+{
     QString Url;
     switch(type){
     case Temperature:
@@ -161,6 +165,7 @@ void dataWorker::parseHTML(const QString sourceText)
     while (!reader.atEnd()) {
         reader.readNext();
         if (reader.isStartElement()) {
+            //qDebug()<<reader.name();
             if (type==Temperature){
                 if (reader.name() == "ul"){         // 查找Html标签：ul
                     strData<<reader.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
@@ -177,6 +182,7 @@ void dataWorker::parseHTML(const QString sourceText)
         parseData(QString());
     }else{
         if(!strData.isEmpty()){
+            qDebug()<<strData;
             parseData(strData.join(splitter));
             exportDataToFile(strData.join(splitter));
         }
@@ -200,8 +206,8 @@ void dataWorker::parseData(const QString sourceText)
     QStringList dataList = sourceText.split(splitter);
 
     dataDate.clear();
-    dataHigh.clear();
-    dataLow.clear();
+    dataList1.clear();
+    dataList2.clear();
 
     dataList.removeFirst();                  // 第一条数据是表头，删除
     for (QString s : dataList){
@@ -209,17 +215,18 @@ void dataWorker::parseData(const QString sourceText)
         QDateTime momentInTime = QDateTime::fromString(dataList.at(0),"yyyy-MM-dd");
         dataDate.append(momentInTime);
         if(type==Temperature)
-         {
-         dataHigh.append(dataList.at(1).toDouble());
-         dataLow.append(dataList.at(2).toDouble());
-         }
-         else
-         {
-         dataHigh.append(dataList.at(2).toDouble());
-         dataLow.append(dataList.at(4).toDouble());
-         }
+        {
+            dataList1.append(dataList.at(1).toDouble());
+            dataList2.append(dataList.at(2).toDouble());
+
+        }
+        else
+        {
+            dataList1.append(dataList.at(2).toDouble());
+            dataList2.append(dataList.at(4).toDouble());
+        }
     }
-    emit dataParseFinished(dataDate,dataHigh,dataLow);
+    emit dataParseFinished(dataDate,dataList1,dataList2);
 }
 
 /**
@@ -235,7 +242,7 @@ void dataWorker::exportDataToFile(const QString dataText)
     if( ! dir.exists(dataPath) )
         qDebug()<<dir.mkdir(dataPath);
 
-    QString fName = QString("%1/%2.txt").arg(dataPath,_requestDate);
+    QString fName = QString("%1/%2-%3-%4.txt").arg(dataPath,_requestDate,city,getQueryTypeInString());
 
     QFile f(fName);
     if(f.open(QIODevice::WriteOnly|QIODevice::Text)){
@@ -266,23 +273,20 @@ void dataWorker::httpGet(QString url)
  */
 void dataWorker::httpsFinished(QNetworkReply *reply)
 {
-    int v = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    QString error="";
     if (reply->error()) {
-        // 通知GUI，http访问出错
-        error = QString("访问出错：代码 %1,原因 %2").arg(v).arg(reply->errorString());
-        emit httpRequestError(error);
-        reply->deleteLater();
-        reply = Q_NULLPTR;
-        return;
-    }    
-    if(v != 200){        
-        error = QString("访问出错：代码 %1,原因 %2").arg(v).arg(reply->errorString());
-        emit httpRequestError(error);
+        qDebug()<<reply->errorString();
         reply->deleteLater();
         reply = Q_NULLPTR;
         return;
     }
+    int v = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if(v != 200){
+        qDebug()<<"HTTP 返回代码："<<v;
+        reply->deleteLater();
+        reply = Q_NULLPTR;
+        return;
+    }
+
 
     qDebug()<<"开始读取返回的数据：";
     QString html = QString::fromLocal8Bit(reply->readAll());
@@ -293,25 +297,20 @@ void dataWorker::httpsFinished(QNetworkReply *reply)
     reply = Q_NULLPTR;
 
     qDebug()<<"返回数据长度："<<html.size();
-
     // qDebug最大显示27605个
     // qDebug()<<html.left(27605);
 
     // 先做一个简单处理，将包含内容的完整<div>..</div>标签内的文本内容，
     // 并滤除其中的空白字符"\r\n\t"
-    int begin = html.indexOf("<div class=\"tqtongji2\">");
-    int end = html.indexOf("<div class=\"lishicity03\">");
+    int begin = html.indexOf("<table");
+    int end = html.indexOf("</table>")+8;
     html = html.mid(begin,end-begin);
     html = html.left(html.indexOf("<div style=\"clear:both\">"));
     html = html.simplified().trimmed();
-
-    if (! html.isEmpty()){
-        qDebug()<<"开始解析html";
-        parseHTML(html);  // 开始解析HTML
-    }else{
-        qDebug()<<"HTML内容为空："<<html;
-        emit dataParseError(QString("HTML内容为空"));
-    }
+    //qDebug()<<html.left(1000);
+    // 开始解析HTML
+    parseHTML(html);
 
 }
+
 
