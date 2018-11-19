@@ -48,14 +48,14 @@ QString dataWorker::getQueryTypeInString()
 }
 
 /**
- * @brief dataWorker::setQueryCity
+ * @brief dataWorker::setRequestCity
  * @param newCity
  */
-void dataWorker::setQueryCity(QString newCity){
+void dataWorker::setRequestCity(QString newCity){
     city = newCity;
 }
 
-void dataWorker::setQueryType(queryType newType)
+void dataWorker::setRequestType(queryType newType)
 {
     type = newType;
     qDebug()<<type;
@@ -206,8 +206,8 @@ void dataWorker::parseData(const QString sourceText)
     QStringList dataList = sourceText.split(splitter);
 
     dataDate.clear();
-    dataList1.clear();
-    dataList2.clear();
+    dataHigh.clear();
+    dataLow.clear();
 
     dataList.removeFirst();                  // 第一条数据是表头，删除
     for (QString s : dataList){
@@ -216,17 +216,17 @@ void dataWorker::parseData(const QString sourceText)
         dataDate.append(momentInTime);
         if(type==Temperature)
         {
-            dataList1.append(dataList.at(1).toDouble());
-            dataList2.append(dataList.at(2).toDouble());
+            dataHigh.append(dataList.at(1).toDouble());
+            dataLow.append(dataList.at(2).toDouble());
 
         }
         else
         {
-            dataList1.append(dataList.at(2).toDouble());
-            dataList2.append(dataList.at(4).toDouble());
+            dataHigh.append(dataList.at(2).toDouble());
+            dataLow.append(dataList.at(4).toDouble());
         }
     }
-    emit dataParseFinished(dataDate,dataList1,dataList2);
+    emit dataParseFinished(dataDate,dataHigh,dataLow);
 }
 
 /**
@@ -312,5 +312,6 @@ void dataWorker::httpsFinished(QNetworkReply *reply)
     parseHTML(html);
 
 }
+
 
 

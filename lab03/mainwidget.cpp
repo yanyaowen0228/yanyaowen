@@ -30,7 +30,7 @@ mainWidget::mainWidget(QWidget *parent) :
     //connect(worker,&dataWorker::dataParseError,this,&mainWidget::on_dataError);
     //connect(worker,&dataWorker::httpRequestError,this,&mainWidget::on_dataError);
     connect(worker,&dataWorker::dataParseFinished,this,&mainWidget::updateDataChart);
-    worker->setQueryType(Temperature);
+    worker->setRequestType(Temperature);
 
 }
 
@@ -257,19 +257,19 @@ void mainWidget::on_btnStart_clicked()
 
     // 选择城市
     if(ui->comboCity->currentText()=="南京")       {
-          worker->setQueryCity("nanjing");
+          worker->setRequestCity("nanjing");
       }
       else if (ui->comboCity->currentText()=="北京") {
-          worker->setQueryCity("beijing");
+          worker->setRequestCity("beijing");
       }
       else if (ui->comboCity->currentText()=="上海") {
-          worker->setQueryCity("shanghai");
+          worker->setRequestCity("shanghai");
       }
       else if (ui->comboCity->currentText()=="杭州") {
-          worker->setQueryCity("hangzhou");
+          worker->setRequestCity("hangzhou");
       }
       else if (ui->comboCity->currentText()=="哈尔滨") {
-          worker->setQueryCity("haerbin");
+          worker->setRequestCity("haerbin");
       }
 
 
@@ -487,12 +487,12 @@ void mainWidget::on_cbLegendItalic_clicked()
 
 void mainWidget::on_radioTemp_clicked()
 {
-    worker->setQueryType(Temperature);
+    worker->setRequestType(Temperature);
 }
 
 void mainWidget::on_radioAQI_clicked()
 {
-    worker->setQueryType(AQI);
+    worker->setRequestType(AQI);
 }
 
 void mainWidget::on_pushButton_clicked()
