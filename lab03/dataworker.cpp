@@ -263,6 +263,7 @@ void dataWorker::httpGet(QString url)
 {
     QNetworkRequest request;
     request.setUrl(QUrl(url));
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     manager->get(request);
 }
 
@@ -302,16 +303,29 @@ void dataWorker::httpsFinished(QNetworkReply *reply)
 
     // 先做一个简单处理，将包含内容的完整<div>..</div>标签内的文本内容，
     // 并滤除其中的空白字符"\r\n\t"
-    int begin = html.indexOf("<table");
-    int end = html.indexOf("</table>")+8;
-    html = html.mid(begin,end-begin);
-    html = html.left(html.indexOf("<div style=\"clear:both\">"));
-    html = html.simplified().trimmed();
-    //qDebug()<<html.left(1000);
-    // 开始解析HTML
-    parseHTML(html);
+    if(type==Temperature)
+        {
+           int begin = html.indexOf("<div class=\"tqtongji2\">");
+           int end = html.indexOf("<div class=\"lishicity03\">");
+           html = html.mid(begin,end-begin);
+           html = html.left(html.indexOf("<div style=\"clear:both\">"));
+           html = html.simplified().trimmed();
 
-}
 
+           qDebug()<<"website"<<html;
+           parseHTML(html);
+          }
+        if(type==AQI)
+        {
+
+            int begin=html.indexOf("<div class=\"api_month_list\">");
+            int end=html.indexOf("<div id=\"chartdiv\" align=\"center\">");
+            html=html.mid(begin,end-begin);
+            html=html.left(html.indexOf("<p >"));
+            html = html.simplified().trimmed();
+            qDebug()<<"website"<<html;
+            parseHTML(html);
+        }
+    }
 
 
